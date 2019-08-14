@@ -1,6 +1,6 @@
+import { Button, Input, Form, Table } from 'antd'
 import React from 'react'
 import { Cmp1 as Com1 } from '@/components'
-import { Button, Input, Form, Table } from 'antd'
 
 const dataSource = [
 	{

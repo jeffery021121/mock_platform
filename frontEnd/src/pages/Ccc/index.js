@@ -1,7 +1,7 @@
 import React from 'react'
+import { debounce } from 'lodash'
 import { connect } from 'dva'
 import { Cmp3 as Com3 } from '@/components'
-import { debounce } from 'lodash'
 
 // import asyncComponent from '@/utils/dynamic'
 

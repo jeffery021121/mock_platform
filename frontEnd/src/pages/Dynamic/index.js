@@ -1,6 +1,6 @@
 import React from 'react'
-import { Cmp3 as Com3 } from '@/components'
 import { debounce } from 'lodash'
+import { Cmp3 as Com3 } from '@/components'
 
 const Dynamic = (props) => {
 	console.log('Dynamic组件的参数：', props)
