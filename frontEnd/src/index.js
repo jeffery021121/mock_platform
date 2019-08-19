@@ -5,9 +5,11 @@ import models from '@/models/index.ts'
 
 // 1. Initialize
 const app = dva({})
+
 // 2. Plugins
 app.use(createLoading())
 app.use(userImmer())
+
 // 3. Model
 models.map(app.model)
 
@@ -16,8 +18,11 @@ app.router(require('./router').default)
 
 // 5. Start
 app.start('#index')
+
+// hmr配置
 if (module.hot) {
 	// console.log('热更新开启')
 	module.hot.accept()
 }
+
 export default app

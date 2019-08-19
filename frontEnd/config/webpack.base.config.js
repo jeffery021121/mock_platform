@@ -20,6 +20,7 @@ module.exports = {
 		extensions: ['.js', '.jsx', '.tsx', '.ts'],
 		alias: {
 			'@': path.resolve(__dirname, '../src'),
+			lib: path.resolve(__dirname, '../lib'),
 			// '@': `${process.cwd()}/src`,
 		},
 	},
@@ -31,14 +32,22 @@ module.exports = {
 				// test: /\.ts|.tsx$/,
 
 				use: [{ loader: 'happypack/loader?id=happyBabel' }, { loader: 'happypack/loader?id=ts' }],
-				include: path.join(process.cwd(), 'src'),
+				include: [
+					path.join(process.cwd(), 'src'),
+					path.join(process.cwd(), 'lib'),
+					path.join(process.cwd(), 'node_modules/webdvautils'),
+				],
 				// loader: 'ts-loader',
 			},
 			{
 				test: /\.jsx?$/,
 				// use: ['babel-loader?cacheDirectory=true'],
 				loader: 'happypack/loader?id=happyBabel',
-				include: path.join(process.cwd(), 'src'),
+				include: [
+					path.join(process.cwd(), 'src'),
+					path.join(process.cwd(), 'lib'),
+					path.join(process.cwd(), 'node_modules/webdvautils'),
+				],
 			},
 			{
 				test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,

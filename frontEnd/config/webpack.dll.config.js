@@ -4,8 +4,10 @@ const pkg = require('../package.json')
 // 引入package.json
 
 // 这个@babel/runtime不可用，不知为何，runtime的使用，是在运行时确定的，所以应该是不能被打倒dll里面的吧
-const vendors = Object.keys(pkg.dependencies).filter((item) => item !== '@babel/runtime')
-// console.log('哈哈哈', vendors)
+const vendors = Object.keys(pkg.dependencies).filter(
+	// eslint-disable-next-line prettier/prettier
+	(item) => (item !== '@babel/runtime' && item !== 'webdvautils')
+)
 module.exports = {
 	entry: {
 		vendor: vendors, // 遍历package.json的所有依赖包
