@@ -1,1 +1,4 @@
-// publicFunc不应该写成一个文件了，一个文件，太下了，应该是一个文件夹
+import isFunction from './isFunction'
+import stateFactory from './stateFactory'
+
+export { isFunction, stateFactory }

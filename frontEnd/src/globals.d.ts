@@ -7,13 +7,13 @@ ts方法
 */
 
 // omit 方法
-declare type Omit<T, K> = Pick<T, Exclude<keyof T, K>>
-// type Exclude<T, U> = T extends U ? never : T;  拿到的是类型的key,通过pick方法转换成新的type
+// declare type Omit<T, K> = Pick<T, Exclude<keyof T, K>>
+// // type Exclude<T, U> = T extends U ? never : T;  拿到的是类型的key,通过pick方法转换成新的type
 
-// 类型深度readonly方法
-declare type DeepReadonly<T> = {
-  readonly [P in keyof T]: DeepReadonly<T[P]>
-}
+// // 类型深度readonly方法
+// declare type DeepReadonly<T> = {
+//   readonly [P in keyof T]: DeepReadonly<T[P]>
+// }
 
 
 

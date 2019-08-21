@@ -1,7 +1,7 @@
 import { RouterAPI } from 'dva'
-import {  Route,Router, Switch } from 'dva/router'
+import { Route, Router, Switch } from 'dva/router'
 import React from 'react'
-import dddd from 'webdvautils'
+import webDvaUtils from 'webdvautils'
 
 class Lol extends React.Component {
 	public render() {
@@ -14,14 +14,18 @@ class Lol extends React.Component {
 // )
 
 function RouterConfig({ history, app }: RouterAPI) {
-	// const Aaa = dddd.asyncComponent(<Lol/>)(() => import(/* webpackChunkName: "aaa" */ '@/pages/Aaa'), {
-	// 	app,
-	// 	modelsFunc: () => [import(/* webpackChunkName: "aaaModel" */ '@/pages/Aaa/models')],
-	// })
+	const SignUp = webDvaUtils.asyncComponent(<Lol />)(
+		() => import(/* webpackChunkName: "aaa" */ '@/pages/SignUp'),
+		{
+			app,
+			modelsFunc: () => [import(/* webpackChunkName: "aaaModel" */ '@/pages/SignUp/model')],
+		},
+	)
 	return (
 		<Router history={history}>
 			<Switch>
 				<Route path="/" exact={true} component={Lol} />
+				<Route path="/signUp" exact={true} component={SignUp} />
 			</Switch>
 		</Router>
 	)
