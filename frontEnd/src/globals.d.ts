@@ -49,17 +49,6 @@ declare type voidFunc<T=any> = (arg: T) => void
 框架级别的类型 的 基本type
 */
 
-//payload参数的默认类型，非常不推荐使用 
-type IPayload = {
-  [propName: string]: any
-}
-
-//action的默认类型，推荐在没有有payload的时候使用
-declare type Action<T=IPayload> = {
-  type: string,
-  payload: T
-}
-
 // 路由的 match参数的类型，这个一般不用，因为我整合了RouteType
 declare type Match = {
   path: string;
@@ -69,6 +58,10 @@ declare type Match = {
 }
 
 // 函数的dispatch方法，希望每个有payload的类型都传递T
-declare type Dispatch<T = Action> = (action: T) => void
+declare type Dispatch<T = Actions> = (action: T) => void
 
 
+declare type ValueOf<T> = T[keyof T];
+declare type createActions<T> = {
+    [P in keyof T]: {type:P,payload:T[P] };
+};

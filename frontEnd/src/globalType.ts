@@ -1,5 +1,6 @@
-import { IsignUpState } from '@/pages/SignUp/model'
+import { IsignUpActions, IsignUpState } from '@/pages/SignUp/model'
 import { History, Location } from 'history'
+import { type } from 'os';
 
 // 全局类型不加I，但是非全局类型都加I
 declare global {
@@ -19,29 +20,8 @@ declare global {
 		signUp: IsignUpState
 	}
 
-	// interface IModel<Istate> {
-	// 	namespace: string
-	// 	state: Istate
-	// 	subscriptions: {
-	// 		[key: string]: (obj: { dispatch: Dispatch; history: History }) => void
-	// 	}
-	// 	effects: {
-	// 		[key: string]: <Ipayload = undefined>(
-	// 			action: Action<Ipayload>,
-	// 			{
-	// 				select,
-	// 				put,
-	// 			}: {
-	// 				select: (cb: (store: Store) => any) => any
-	// 				put: <Ipayload = undefined>(action: Action<Ipayload>) => any
-	// 			},
-	// 		) => any
-	// 	}
-	// 	reducers: {
-	// 		[key: string]: <Ipayload = undefined>(state: Istate, action: Action<Ipayload>) => any
-	// 	}
-	// }
 
+	type Actions = IsignUpActions/*  | IasdfsignUpActions*/
 	interface IModel<Istate> {
 		namespace: string
 		state: Istate
@@ -50,16 +30,15 @@ declare global {
 		}
 		effects: {
 			[key: string]: (
-				action: Action<any>,
+				action: Actions,
 				effects: {
 					select: (cb: (store: Store) => any) => any
-					put: (action: Action<any>) => any
+					put: (action: Actions) => any // 这里的action应该可以直接搞到一个全局维护的action的。
 				},
 			) => any
 		}
 		reducers: {
-			// [key: string]: (state: Istate, action: Action<any>) => any
-			[key: string]: (state: Istate, action: Action<any>) => any
+			[key: string]: (state: Istate, action: Actions) => any
 		}
 	}
 }

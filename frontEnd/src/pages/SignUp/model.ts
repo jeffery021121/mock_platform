@@ -5,7 +5,7 @@ interface INode {
 	children?: INode[]
 }
 
-class IinitalStateClass {
+class IinitalState {
 	public time = '时间'
 	public toggle = 'tyui'
 	public obj = { a: { b: { c: [1, 2, 8] } }, asd: 3456 }
@@ -17,7 +17,7 @@ class IinitalStateClass {
 }
 
 // 获取实例
-const classState = new IinitalStateClass()
+const classState = new IinitalState()
 
 // 通过typeof获取到类型
 export type IsignUpState = typeof classState
@@ -25,44 +25,49 @@ export type IsignUpState = typeof classState
 // 通过工厂函数去除数据的class标志,使得immer可用
 const initalState = stateFactory<IsignUpState>(classState)
 
-interface Iaaa {
-	aaa: string
+// 最难的一个步骤就是同步payload数据，目前没有太好的想法。
+interface IactionType {
+	'signUp/payloadRype': {
+		id: string
+		name: string
+	}
+	'signUp/updateState': {
+		asdf: number
+	}
 }
 
-// 最难的一个步骤就是同步payload数据，目前没有太好的想法。
+// // 创建所有action类型
+// type Iactions = createActions<IactionType>
+
+// // 导出Actions需要的类型
+// export type IsignUpActions = ValueOf<Iactions>
+export type IsignUpActions = ValueOf<createActions<IactionType>>
 
 const signUp: IModel<IsignUpState> = {
 	namespace: 'signUp',
 	state: initalState,
 	subscriptions: { setup({ dispatch, history }) {} },
 	effects: {
-		*payloadRype({ payload }: Action<Iaaa>, { select, put }) {
+		*payloadRype(action, { select, put }) {
+			if (action.type !== 'signUp/payloadRype') return
 			const signUp: IsignUpState = yield select(({ signUp }) => signUp) // yield会导致any
 			yield console.log('asdfasfda', signUp.treeData)
-			yield put({ type: 'asdf', payload: {} })
-			console.log(payload.aaa)
+			yield put({
+				type: 'signUp/payloadRype',
+				payload: { id: 'id', name: 'string' },
+			})
+			console.log(action.payload.name)
 		},
 	},
 
 	reducers: {
-		updateState(state, action: Action<Iaaa>) {},
+		updateState(state, action) {
+			if (action.type !== 'signUp/updateState') return
+			const { asdf } = action.payload
+		},
 	},
 }
 
-// const signUp = {
-// 	namespace: 'signUp',
-// 	state: initalState,
-// 	subscriptions: { setup({ dispatch, history }: { dispatch: Dispatch; history: History }) {} },
-// 	effects: {
-// 		*payloadRype({ payload }: Action, { select, put }: EffectsCommandMap) {
-// 			const signUp: IsignUpState = yield select(({ signUp }: Store) => signUp) // yield会导致any
-// 			yield console.log('asdfasfda', signUp.time)
-// 			yield put({ type: 'asdf', payload: {} })
-// 		},
-// 	},
-// 	reducers: {
-// 		updateState(state: IsignUpState, action: Action) {},
-// 	},
-// }
-
 export default signUp
+
+// //////////////////////////////

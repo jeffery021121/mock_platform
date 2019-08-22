@@ -8,7 +8,7 @@
 
 ## 开发规范之 model
 
-> model统一使用异步注册的方式来实现
+> model 统一使用异步注册的方式来实现
 
 ## 开发规范之 components
 
@@ -16,4 +16,25 @@
 
 ## 开发规范之 工具函数和工具组件
 
-> 工具函数如model防重复函数，工具组件如异步加载页面，卡顿时长超过200ms的处理组件等统一写在src下的util组件中。
+> 工具函数如 model 防重复函数，工具组件如异步加载页面，卡顿时长超过 200ms 的处理组件等统一写在 src 下的 util 组件中。
+
+### 分割线
+
+- 处理 mapstate 函数，如果返回值不是固定的 store.prop，有自定义类型的时候
+
+```js
+type MapProps<NewState> = (state: Store, ownProps?: any) => NewState;
+function returnType<NewState>(mapStateToProps: MapProps<NewState>) {
+  return {} as any as NewState;
+}
+
+function mapStateToProps(state: Store, ownProp?: any) {
+  return {
+    ...state.signUp,
+    a: '',
+    asdfasdfasdfasdf:'',
+  };
+};
+
+const mockNewState = returnType(mapStateToProps);
+```
