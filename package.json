@@ -1,0 +1,27 @@
+{
+  "name": "mock_platform",
+  "version": "0.0.1",
+  "description": "> 项目全篇使用 ts 来编写",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jeffery021121/mock_platform.git"
+  },
+  "author": "jeffery0211",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jeffery021121/mock_platform/issues"
+  },
+  "homepage": "https://github.com/jeffery021121/mock_platform#readme",
+  "devDependencies": {
+    "cz-conventional-changelog": "^3.0.2"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
+}
