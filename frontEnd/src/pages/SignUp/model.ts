@@ -5,7 +5,8 @@ interface INode {
 	children?: INode[]
 }
 
-class IinitalState {
+// 定义初始数据，创建成类是为了不用直接写数据的类型，直接定义初始值，通过typeof获取类型即可
+class InitalState {
 	public time = '时间'
 	public toggle = 'tyui'
 	public obj = { a: { b: { c: [1, 2, 8] } }, asd: 3456 }
@@ -16,16 +17,7 @@ class IinitalState {
 	] // 这是一个典型的树数据，一般来说我们的处理也不一样
 }
 
-// 获取实例
-const classState = new IinitalState()
-
-// 通过typeof获取到类型
-export type IsignUpState = typeof classState
-
-// 通过工厂函数去除数据的class标志,使得immer可用
-const initalState = stateFactory<IsignUpState>(classState)
-
-// 最难的一个步骤就是同步payload数据，目前没有太好的想法。
+// 定义action的内容，键为type.值为payload
 interface IactionType {
 	'signUp/payloadRype': {
 		id: string
@@ -36,21 +28,14 @@ interface IactionType {
 	}
 }
 
-// // 创建所有action类型
-// type Iactions = createActions<IactionType>
-
-// // 导出Actions需要的类型
-// export type IsignUpActions = ValueOf<Iactions>
-export type IsignUpActions = ValueOf<createActions<IactionType>>
-
-const signUp: IModel<IsignUpState> = {
+const signUp: IModel<InitalState> = {
 	namespace: 'signUp',
-	state: initalState,
+	state: stateFactory(InitalState),// 通过工厂函数处理数据使之可以被immer使用
 	subscriptions: { setup({ dispatch, history }) {} },
 	effects: {
 		*payloadRype(action, { select, put }) {
-			if (action.type !== 'signUp/payloadRype') return
-			const signUp: IsignUpState = yield select(({ signUp }) => signUp) // yield会导致any
+			if (action.type !== 'signUp/payloadRype') return // 如果不写action类型，这里会是联合类型，得加一层判断
+			const signUp: InitalState = yield select(({ signUp }) => signUp) // yield会导致any
 			yield console.log('asdfasfda', signUp.treeData)
 			yield put({
 				type: 'signUp/payloadRype',
@@ -67,6 +52,8 @@ const signUp: IModel<IsignUpState> = {
 		},
 	},
 }
+
+export type IsignUpActions = CreateActions<IactionType>
 
 export default signUp
 

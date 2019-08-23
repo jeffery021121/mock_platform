@@ -65,3 +65,7 @@ declare type ValueOf<T> = T[keyof T];
 declare type createActions<T> = {
     [P in keyof T]: {type:P,payload:T[P] };
 };
+
+// IsignUpActions = ValueOf<createActions<IactionType>>
+
+declare type CreateActions<T>=ValueOf<createActions<T>>
