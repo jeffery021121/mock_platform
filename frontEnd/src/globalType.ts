@@ -1,6 +1,5 @@
 import { IsignUpActions, IsignUpState } from '@/pages/SignUp/model'
 import { History, Location } from 'history'
-import { type } from 'os';
 
 // 全局类型不加I，但是非全局类型都加I
 declare global {
