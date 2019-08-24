@@ -14,7 +14,7 @@ module.exports = (app: Application) => {
       type: String,
       required: true,
     },
-    password_prompt: { // 密码提示
+    password_prompt: { // 密码提示,这个省掉吧，感觉没啥用
       type: String,
       required: true,
     },
@@ -35,7 +35,7 @@ module.exports = (app: Application) => {
     },
     token: {
       mobile: String, // 部分为安卓和苹果的原因是，不同平台的手机也不能同时登陆一个qq号。通过不同的登陆接口名来判断登陆平台
-      web: String
+      web: String,
     },
     reg_time: Date,
     last_login_time: Date,
