@@ -53,35 +53,42 @@ class SignUp extends PureComponent<Iprops> {
 				目前没有找到实现的方式
 				*/}
 
-				<ValiForm<Ivalidate> needForm={true}>
+				<ValiForm<Ivalidate> needForm={true} labelCol={{ span: 5 }} wrapperCol={{ span: 12 }}>
 					{({ checkStatus, getStates, reset }) => {
 						if (!this.checkStatus) this.checkStatus = checkStatus
 						if (!this.reset) this.reset = reset
 						if (!this.getStates) this.getStates = getStates
 						return (
-							<Check sourceName={'name'} rules={{ type: 'string', required: true }}>
-								{({ listen, help, validateStatus }) => (
-									<FormItem validateStatus={validateStatus} help={help}>
-										<Input
-											onChange={listen(() => {
-												console.log('hahaha')
-											})}
-											placeholder="请输入手机号"
-										/>
-									</FormItem>
+							<Check
+								sourceName={'name'}
+								rules={{ type: 'string', required: true }}
+								needFormItem={true}
+								label="用名"
+							>
+								{({ listen }) => (
+									<Input
+										onChange={listen((e) => {
+											console.log('这里是啥啊：：：：：',e.target.value)
+										})}
+										placeholder="请输入手机号"
+									/>
 								)}
 							</Check>
 						)
 					}}
 				</ValiForm>
+				<div>
+					<button onClick={this.handleAaa}>注册</button>
+				</div>
 			</div>
 		)
 	}
 
 	private handleAaa = async (event: React.MouseEvent) => {
-		const checkStatus = await this.checkStatus()
-		const asdf = this.getStates()
-		const result = this.reset()
+		// const checkStatus = await this.checkStatus()
+		const states = this.getStates()
+		// const result = this.reset()
+		console.log('所有数据：',states)
 		// this.props.dispatch({
 		// 	type: 'signUp/payloadRype',
 		// 	payload: { id: '234', name: 'string' },
