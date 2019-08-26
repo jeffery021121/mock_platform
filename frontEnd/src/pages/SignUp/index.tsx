@@ -53,7 +53,7 @@ class SignUp extends PureComponent<Iprops> {
 				目前没有找到实现的方式
 				*/}
 
-				<ValiForm<Ivalidate>>
+				<ValiForm<Ivalidate> needForm={true}>
 					{({ checkStatus, getStates, reset }) => {
 						if (!this.checkStatus) this.checkStatus = checkStatus
 						if (!this.reset) this.reset = reset

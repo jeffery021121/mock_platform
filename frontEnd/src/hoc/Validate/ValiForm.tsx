@@ -1,4 +1,6 @@
 import { Form } from 'antd'
+import { FormProps } from 'antd/lib/form/Form'
+
 // @ts-ignore
 import schema from 'async-validator'
 import produce from 'immer'
@@ -43,8 +45,9 @@ export interface IvaliFormRenderProps<T = any> {
 	reset: () => void
 }
 
-interface IProps<T> {
+interface IProps<T> extends FormProps {
 	children: (prop: IvaliFormRenderProps<T>) => JSX.Element
+	needForm?: boolean
 }
 
 const initState: { formData: { [propName: string]: IItem } } = {
@@ -63,24 +66,33 @@ const initState: { formData: { [propName: string]: IItem } } = {
 class ValiForm<T = any /* { [propName: string]: any } */> extends PureComponent<IProps<T>> {
 	public state = initState
 	public render() {
+		const { needForm = false, children, ...props } = this.props
 		return (
-			<>
-				<valiContext.Provider
-					value={{
-						setStateObj: this.setStateObj,
-						getState: this.getState,
-						verify: this.verify,
-						deleteProp: this.deleteProp,
-						FormItem,
-					}}
-				>
-					{this.props.children({
+			<valiContext.Provider
+				value={{
+					setStateObj: this.setStateObj,
+					getState: this.getState,
+					verify: this.verify,
+					deleteProp: this.deleteProp,
+					FormItem,
+				}}
+			>
+				{needForm ? (
+					<Form {...props}>
+						{children({
+							checkStatus: this.checkStatus,
+							getStates: this.getStates,
+							reset: this.resetAll,
+						})}
+					</Form>
+				) : (
+					children({
 						checkStatus: this.checkStatus,
 						getStates: this.getStates,
 						reset: this.resetAll,
-					})}
-				</valiContext.Provider>
-			</>
+					})
+				)}
+			</valiContext.Provider>
 		)
 	}
 
