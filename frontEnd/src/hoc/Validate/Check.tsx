@@ -107,7 +107,7 @@ class Check extends PureComponent<IProps> {
 		cb?: (...props: Array<any>) => void,
 	) => async (...props: Array<any>) => {
 		const { source, sourceName, rules } = this.props
-		if (source) setStateObj('value')(source)
+		if (source) await setStateObj('value')(source)
 
 		if (sourceName) {
 			const [prop1] = props
@@ -115,7 +115,7 @@ class Check extends PureComponent<IProps> {
 			if (prop1 && prop1.target !== undefined) {
 				value = prop1.target.value
 			}
-			setStateObj('value')({ [sourceName]: value })
+			await setStateObj('value')({ [sourceName]: value })
 		}
 
 		if (cb) await cb(...props)

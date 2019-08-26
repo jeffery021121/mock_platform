@@ -50,9 +50,9 @@ class SignUp extends PureComponent<Iprops> {
 								>
 									{({ listen }) => (
 										<Input
-											onChange={listen((e) => {
+											onChange={listen(/* (e) => {
 												console.log('这里是啥啊：：：：：', e.target.value)
-											})}
+											} */)}
 											placeholder="请输入手机号"
 										/>
 									)}
@@ -63,6 +63,7 @@ class SignUp extends PureComponent<Iprops> {
 									needFormItem={true}
 									label="地址"
 									defaultValue={'我是默认值了asdfasdfasdfasdf啦'} // 这两个属性sourceName和defaultValue 配合完全可以实现非受控组件所有功能
+									// hasFeedback={true}
 								>
 									{({ listen }) => (
 										<Input
@@ -86,6 +87,7 @@ class SignUp extends PureComponent<Iprops> {
 	private handleAaa = async (event: React.MouseEvent) => {
 		// const checkStatus = await this.checkStatus()
 		const states = this.getStates()
+		this.checkStatus()
 		// const result = this.reset()
 		console.log('所有数据：', states)
 		// this.props.dispatch({
