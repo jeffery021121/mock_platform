@@ -103,26 +103,20 @@ class Check extends PureComponent<IProps> {
 		cb: (...props: Array<any>) => void,
 	) => async (...props: Array<any>) => {
 		const { source, sourceName, rules } = this.props
-		if (sourceName) {
-			const [e] = props
-			if (e && e.target !== undefined) e.persist()
-		}
-		// props是看组件的返回值，所有不能确定
-		if (cb) await cb(...props)
-
-		// const { source, sourceName, rules } = this.props
-		const { propName } = this.state
-
 		if (source) setStateObj('value')(source)
+
 		if (sourceName) {
 			const [prop1] = props
 			let value: any = prop1
 			if (prop1 && prop1.target !== undefined) {
 				value = prop1.target.value
 			}
-			console.log('listenValue:', prop1)
 			setStateObj('value')({ [sourceName]: value })
 		}
+
+		if (cb) await cb(...props)
+
+		const { propName } = this.state
 		if (rules) verify(propName)
 	}
 }
