@@ -1,6 +1,6 @@
 import { FormItemProps } from 'antd/lib/form/FormItem'
 import React, { Fragment, PureComponent } from 'react'
-import { IItem, IValiForm, valiContext } from './CheckForm'
+import { checkContext, IItem, IValiForm } from './CheckForm'
 
 interface IProps extends FormItemProps {
 	children: (prop: {
@@ -39,7 +39,7 @@ class Check extends PureComponent<IProps> {
 	public render() {
 		const { source, sourceName, needFormItem = true, ...props } = this.props
 		return (
-			<valiContext.Consumer>
+			<checkContext.Consumer>
 				{({ setStateObj, getState, verify, deleteProp, FormItem }) => {
 					let propName = ''
 					if (source) {
@@ -73,7 +73,7 @@ class Check extends PureComponent<IProps> {
 						</Fragment>
 					)
 				}}
-			</valiContext.Consumer>
+			</checkContext.Consumer>
 		)
 	}
 

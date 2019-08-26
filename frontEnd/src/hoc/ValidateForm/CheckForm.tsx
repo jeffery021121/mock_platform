@@ -35,7 +35,7 @@ const prop: IValiForm = {
 	FormItem,
 }
 
-const valiContext = React.createContext(prop)
+const checkContext = React.createContext(prop)
 
 type getStates<T> = () => T
 
@@ -68,7 +68,7 @@ class CheckForm<T = any /* { [propName: string]: any } */> extends PureComponent
 	public render() {
 		const { needForm = true, children, ...props } = this.props
 		return (
-			<valiContext.Provider
+			<checkContext.Provider
 				value={{
 					setStateObj: this.setStateObj,
 					getState: this.getState,
@@ -92,7 +92,7 @@ class CheckForm<T = any /* { [propName: string]: any } */> extends PureComponent
 						reset: this.resetAll,
 					})
 				)}
-			</valiContext.Provider>
+			</checkContext.Provider>
 		)
 	}
 
@@ -201,4 +201,4 @@ class CheckForm<T = any /* { [propName: string]: any } */> extends PureComponent
 }
 
 export default CheckForm
-export { valiContext }
+export { checkContext }
