@@ -6,7 +6,7 @@ import React, { PureComponent } from 'react'
 
 const FormItem = Form.Item
 
-interface IValiForm {
+export interface IValiForm {
 	setStateObj: (
 		propName: 'value' | 'status' | 'descriptor',
 	) => (prop: { [propName: string]: any }) => void
@@ -37,14 +37,14 @@ const valiContext = React.createContext(prop)
 
 type getStates<T> = () => T
 
-export interface IvaliFormChildrenProps<T = any> {
+export interface IvaliFormRenderProps<T = any> {
 	checkStatus: () => Promise<boolean>
 	getStates: getStates<T>
 	reset: () => void
 }
 
 interface IProps<T> {
-	children: (prop: IvaliFormChildrenProps<T>) => JSX.Element
+	children: (prop: IvaliFormRenderProps<T>) => JSX.Element
 }
 
 const initState: { formData: { [propName: string]: IItem } } = {

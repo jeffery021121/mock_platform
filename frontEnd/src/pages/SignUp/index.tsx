@@ -1,4 +1,4 @@
-import { Check, IvaliFormChildrenProps, ValiForm } from '@/hoc'
+import { Check, IvaliFormRenderProps, ValiForm } from '@/hoc'
 import { Form, Input } from 'antd'
 import { connect } from 'dva'
 import React, { PureComponent } from 'react'
@@ -19,9 +19,9 @@ const FormItem = Form.Item
 
 @connect(({ signUp }: Store) => ({ signUp }))
 class SignUp extends PureComponent<Iprops> {
-	private checkStatus = (undefined as unknown) as IvaliFormChildrenProps['checkStatus']
-	private reset = (undefined as unknown) as IvaliFormChildrenProps['reset']
-	private getStates = (undefined as unknown) as IvaliFormChildrenProps<Ivalidate>['getStates']
+	private checkStatus = (undefined as unknown) as IvaliFormRenderProps['checkStatus']
+	private reset = (undefined as unknown) as IvaliFormRenderProps['reset']
+	private getStates = (undefined as unknown) as IvaliFormRenderProps<Ivalidate>['getStates']
 
 	public constructor(props: Iprops) {
 		super(props)

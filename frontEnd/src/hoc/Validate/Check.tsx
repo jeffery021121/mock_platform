@@ -1,15 +1,17 @@
 import { FormItemProps } from 'antd/lib/form/FormItem'
 import React, { Fragment, PureComponent } from 'react'
-import { IItem, valiContext } from './ValiForm'
+import { IItem, IValiForm, valiContext } from './ValiForm'
 
-interface IProps  extends FormItemProps {
-	children: (prop: any) => JSX.Element
-	rules?: any
+interface IProps extends FormItemProps {
+	children: (prop: {
+		listen: (cb: (...props: any[]) => void) => (...props: any[]) => Promise<void>
+		help?: string
+		validateStatus?: '' | 'success' | 'warning' | 'error' | 'validating' | undefined
+	}) => JSX.Element
+	rules?: any // 这个的确比较难定义，得特备清楚这个ku估计才行，可以为对象或者函数，所以先any吧。
 	source?: { [propName: string]: any }
-	// help?: string
 	sourceName?: string
 	needFormItem?: boolean
-	[propName: string]: any
 }
 // interface IProps extends FormItemProps{
 
@@ -20,9 +22,10 @@ const STATUS = {
 }
 
 class Check extends PureComponent<IProps> {
-	public updateState: any = null
-	public deleteProp: any = null
-	public state: any = {}
+	// private reset = (undefined as unknown) as IvaliFormRenderProps['reset']
+	public updateState = (null as unknown) as IValiForm['setStateObj']
+	public deleteProp = (null as unknown) as IValiForm['deleteProp']
+	public state = ({} as unknown) as { propName: string }
 	public componentDidMount = async () => {
 		const { source, sourceName } = this.props
 		let key = undefined as any
@@ -96,10 +99,10 @@ class Check extends PureComponent<IProps> {
 		}
 	}
 
-	private listen = (
-		setStateObj: (propName: 'value' | 'status') => (prop: { [propName: string]: any }) => void,
-		verify: (propName: string) => any,
-	) => (cb: any) => async (...props: Array<any>) => {
+	private listen = (setStateObj: IValiForm['setStateObj'], verify: IValiForm['verify']) => (
+		cb: (...props: Array<any>) => void,
+	) => async (...props: Array<any>) => {
+		// props是看组件的返回值，所有不能确定
 		if (cb) await cb(...props)
 
 		const { source, sourceName, rules } = this.props
