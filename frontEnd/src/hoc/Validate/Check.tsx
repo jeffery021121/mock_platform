@@ -4,7 +4,7 @@ import { IItem, IValiForm, valiContext } from './ValiForm'
 
 interface IProps extends FormItemProps {
 	children: (prop: {
-		listen: (cb: (...props: any[]) => void) => (...props: any[]) => Promise<void>
+		listen: (cb?: (...props: any[]) => void) => (...props: any[]) => Promise<void>
 		help?: string
 		validateStatus?: '' | 'success' | 'warning' | 'error' | 'validating' | undefined
 	}) => JSX.Element
@@ -12,6 +12,7 @@ interface IProps extends FormItemProps {
 	source?: { [propName: string]: any }
 	sourceName?: string
 	needFormItem?: boolean
+	defaultValue?: any // 默认值，和sourceName配合使用
 }
 // interface IProps extends FormItemProps{
 
@@ -83,9 +84,12 @@ class Check extends PureComponent<IProps> {
 
 	private registProp = () => {
 		if (this.updateState) {
-			const { rules, source, sourceName } = this.props
+			const { rules, source, sourceName, defaultValue } = this.props
 			if (source && sourceName) {
 				return console.error('sourceName和source属性只能使用一个，以区分是否为受控组件')
+			}
+			if (source && defaultValue) {
+				return console.error('defaultValue只能配合sourceName使用')
 			}
 			const { propName } = this.state
 			if (source) this.updateState('value')(source)
@@ -95,12 +99,12 @@ class Check extends PureComponent<IProps> {
 				}
 				this.updateState('descriptor')(descriptor)
 			}
-			if (sourceName) this.updateState('value')({ [sourceName]: undefined })
+			if (sourceName) this.updateState('value')({ [sourceName]: defaultValue })
 		}
 	}
 
 	private listen = (setStateObj: IValiForm['setStateObj'], verify: IValiForm['verify']) => (
-		cb: (...props: Array<any>) => void,
+		cb?: (...props: Array<any>) => void,
 	) => async (...props: Array<any>) => {
 		const { source, sourceName, rules } = this.props
 		if (source) setStateObj('value')(source)
