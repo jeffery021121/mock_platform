@@ -1,4 +1,4 @@
-import { Form } from 'antd'
+import { Form } from 'antd' //  彻底和antd聚合，非聚合版本在Validate中，这个要提取成三方库，使用antd的import方法即可
 import { FormProps } from 'antd/lib/form/Form'
 
 // @ts-ignore
@@ -13,7 +13,7 @@ export interface IValiForm {
 		propName: 'value' | 'status' | 'descriptor',
 	) => (prop: { [propName: string]: any }) => void
 	getState: (propName: string) => IItem | {}
-	verify: (propName: string) => void
+	verify: ( asyncSource?: { [propName: string]: any })=>(propName: string) => void
 	deleteProp: (propName: string) => void
 	FormItem: typeof FormItem
 }
@@ -30,7 +30,7 @@ export interface IItem {
 const prop: IValiForm = {
 	setStateObj: (propName) => (prop) => {},
 	getState: (propName) => ({}),
-	verify: (propName) => {},
+	verify: ()=>(propName) => {},
 	deleteProp: (propName) => {},
 	FormItem,
 }
@@ -39,14 +39,14 @@ const valiContext = React.createContext(prop)
 
 type getStates<T> = () => T
 
-export interface IvaliFormRenderProps<T = any> {
+export interface IcheckFormRenderProps<T = any> {
 	checkStatus: () => Promise<boolean>
 	getStates: getStates<T>
 	reset: () => void
 }
 
 interface IProps<T> extends FormProps {
-	children: (prop: IvaliFormRenderProps<T>) => JSX.Element
+	children: (prop: IcheckFormRenderProps<T>) => JSX.Element
 	needForm?: boolean
 }
 
@@ -63,10 +63,10 @@ const initState: { formData: { [propName: string]: IItem } } = {
 	},
 }
 
-class ValiForm<T = any /* { [propName: string]: any } */> extends PureComponent<IProps<T>> {
+class CheckForm<T = any /* { [propName: string]: any } */> extends PureComponent<IProps<T>> {
 	public state = initState
 	public render() {
-		const { needForm = false, children, ...props } = this.props
+		const { needForm = true, children, ...props } = this.props
 		return (
 			<valiContext.Provider
 				value={{
@@ -109,8 +109,12 @@ class ValiForm<T = any /* { [propName: string]: any } */> extends PureComponent<
 	}
 
 	// 校验函数
-	private verify: IValiForm['verify'] = (propName) => {
+	private verify: IValiForm['verify'] = (asyncSource) => (propName) => {
 		const { value, descriptor } = this.state.formData[propName]
+		let source = {
+			[propName]: value,
+		}
+		if (asyncSource) source = asyncSource
 		if (!descriptor) {
 			return this.setStateObj('status')({
 				[propName]: {
@@ -119,11 +123,11 @@ class ValiForm<T = any /* { [propName: string]: any } */> extends PureComponent<
 				},
 			})
 		}
-		const source = {
-			[propName]: value,
-		}
+
 		let validator = new schema(descriptor)
-		type IErrors = Array<{ message: string }>
+		type IErrors = Array<{
+			message: string
+		}>
 		validator.validate(source, (errors: IErrors) => {
 			if (errors) {
 				let message = ''
@@ -153,7 +157,7 @@ class ValiForm<T = any /* { [propName: string]: any } */> extends PureComponent<
 
 	// 取出所有的status,然后统一验证，返回一个结果
 	private checkStatus = async () => {
-		await Object.keys(this.state.formData).forEach(this.verify)
+		await Object.keys(this.state.formData).forEach(this.verify())
 
 		let status = true
 		Object.values(this.state.formData).forEach((item) => {
@@ -196,5 +200,5 @@ class ValiForm<T = any /* { [propName: string]: any } */> extends PureComponent<
 	}
 }
 
-export default ValiForm
+export default CheckForm
 export { valiContext }

@@ -1,7 +1,8 @@
+import { FormItemProps } from 'antd/lib/form/FormItem'
 import React, { Fragment, PureComponent } from 'react'
-import { IItem, IValiForm, valiContext } from './Vali'
+import { IItem, IValiForm, valiContext } from './CheckForm'
 
-interface IProps {
+interface IProps extends FormItemProps {
 	children: (prop: {
 		listen: (cb?: (...props: any[]) => void) => (...props: any[]) => Promise<void>
 		help?: string
@@ -10,6 +11,7 @@ interface IProps {
 	rules?: any // 这个的确比较难定义，得特备清楚这个ku估计才行，可以为对象或者函数，所以先any吧。
 	source?: { [propName: string]: any }
 	sourceName?: string
+	needFormItem?: boolean
 	defaultValue?: any // 默认值，和sourceName配合使用
 }
 // interface IProps extends FormItemProps{
@@ -21,6 +23,7 @@ const STATUS = {
 }
 
 class Check extends PureComponent<IProps> {
+	// private reset = (undefined as unknown) as IcheckFormRenderProps['reset']
 	public updateState = (null as unknown) as IValiForm['setStateObj']
 	public deleteProp = (null as unknown) as IValiForm['deleteProp']
 	public state = ({} as unknown) as { propName: string }
@@ -34,10 +37,10 @@ class Check extends PureComponent<IProps> {
 		this.registProp()
 	}
 	public render() {
-		const { source, sourceName, ...props } = this.props
+		const { source, sourceName, needFormItem = true, ...props } = this.props
 		return (
 			<valiContext.Consumer>
-				{({ setStateObj, getState, verify, deleteProp }) => {
+				{({ setStateObj, getState, verify, deleteProp, FormItem }) => {
 					let propName = ''
 					if (source) {
 						propName = Object.keys(source)[0]
@@ -50,6 +53,16 @@ class Check extends PureComponent<IProps> {
 					if (!this.updateState) this.updateState = setStateObj
 					if (!this.deleteProp) this.deleteProp = deleteProp
 					const { status = STATUS } = getState(propName) as IItem
+
+					if (needFormItem) {
+						return (
+							<FormItem help={status.help} validateStatus={status.validateStatus} {...props}>
+								{this.props.children({
+									listen: this.listen(setStateObj, verify),
+								})}
+							</FormItem>
+						)
+					}
 					return (
 						<Fragment>
 							{this.props.children({

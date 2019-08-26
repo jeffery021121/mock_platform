@@ -14,10 +14,10 @@ module.exports = (app: Application) => {
       type: String,
       required: true,
     },
-    password_prompt: { // 密码提示,这个省掉吧，感觉没啥用
-      type: String,
-      required: true,
-    },
+    // password_prompt: { // 密码提示,这个省掉吧，感觉没啥用
+    //   type: String,
+    //   required: true,
+    // },
     eMail: {
       type: String,
       required: true,

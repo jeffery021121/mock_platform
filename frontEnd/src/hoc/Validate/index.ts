@@ -1,4 +1,4 @@
 import Check from './Check'
-import ValiForm, { IvaliFormRenderProps } from './ValiForm'
+import Vali, { IvaliRenderProps } from './Vali'
 
-export { ValiForm, Check, IvaliFormRenderProps }
+export { Vali, Check, IvaliRenderProps }
