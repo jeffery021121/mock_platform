@@ -1,17 +1,22 @@
-// import { Form } from 'antd' //  和antd聚合的感觉应该是不对的，应该彻底剥离
+import { Form } from 'antd' //  彻底和antd聚合，非聚合版本在Validate中，这个要提取成三方库，使用antd的import方法即可
+import { FormProps } from 'antd/lib/form/Form'
 
 // @ts-ignore
 import schema from 'async-validator'
 import produce from 'immer'
 import React, { PureComponent } from 'react'
+import CheckFormItem from './CheckFormItem'
+
+const FormItem = Form.Item
 
 export interface IValiForm {
 	setStateObj: (
 		propName: 'value' | 'status' | 'descriptor',
 	) => (prop: { [propName: string]: any }) => void
 	getState: (propName: string) => IItem | {}
-	verify: ( asyncSource?: { [propName: string]: any })=>(propName: string) => void
+	verify: (asyncSource?: { [propName: string]: any }) => (propName: string) => boolean
 	deleteProp: (propName: string) => void
+	FormItem: typeof FormItem
 }
 
 export interface IItem {
@@ -26,22 +31,24 @@ export interface IItem {
 const prop: IValiForm = {
 	setStateObj: (propName) => (prop) => {},
 	getState: (propName) => ({}),
-	verify: ()=>(propName) => {},
+	verify: () => (propName) => false,
 	deleteProp: (propName) => {},
+	FormItem,
 }
 
-const valiContext = React.createContext(prop)
+const checkContext = React.createContext(prop)
 
 type getStates<T> = () => T
 
-export interface IvaliRenderProps<T = any> {
+export interface IcheckFormRenderProps<T = any> {
 	checkStatus: () => Promise<boolean>
 	getStates: getStates<T>
 	reset: () => void
 }
 
-interface IProps<T> {
-	children: (prop: IvaliRenderProps<T>) => JSX.Element
+interface IProps<T> extends FormProps {
+	children: (prop: IcheckFormRenderProps<T>) => JSX.Element
+	needForm?: boolean
 }
 
 const initState: { formData: { [propName: string]: IItem } } = {
@@ -57,27 +64,37 @@ const initState: { formData: { [propName: string]: IItem } } = {
 	},
 }
 
-class Vali<T = any /* { [propName: string]: any } */> extends PureComponent<IProps<T>> {
+class CheckForm<T = any /* { [propName: string]: any } */> extends PureComponent<IProps<T>> {
+	public static Item = CheckFormItem
 	public state = initState
 	public render() {
-		const { children, ...props } = this.props
+		const { needForm = true, children, ...props } = this.props
 		return (
-			<valiContext.Provider
+			<checkContext.Provider
 				value={{
 					setStateObj: this.setStateObj,
 					getState: this.getState,
 					verify: this.verify,
 					deleteProp: this.deleteProp,
+					FormItem,
 				}}
 			>
-				{(
+				{needForm ? (
+					<Form {...props}>
+						{children({
+							checkStatus: this.checkStatus,
+							getStates: this.getStates,
+							reset: this.resetAll,
+						})}
+					</Form>
+				) : (
 					children({
 						checkStatus: this.checkStatus,
 						getStates: this.getStates,
 						reset: this.resetAll,
 					})
 				)}
-			</valiContext.Provider>
+			</checkContext.Provider>
 		)
 	}
 
@@ -95,18 +112,21 @@ class Vali<T = any /* { [propName: string]: any } */> extends PureComponent<IPro
 
 	// 校验函数
 	private verify: IValiForm['verify'] = (asyncSource) => (propName) => {
+		let result = true
 		const { value, descriptor } = this.state.formData[propName]
 		let source = {
 			[propName]: value,
 		}
 		if (asyncSource) source = asyncSource
 		if (!descriptor) {
-			return this.setStateObj('status')({
+			this.setStateObj('status')({
 				[propName]: {
 					validateStatus: '',
 					help: '',
 				},
 			})
+			result = false
+			return result
 		}
 
 		let validator = new schema(descriptor)
@@ -118,6 +138,7 @@ class Vali<T = any /* { [propName: string]: any } */> extends PureComponent<IPro
 				let message = ''
 				if (errors && errors.length) {
 					message = errors[0].message
+					result = false
 				}
 				return this.setStateObj('status')({
 					[propName]: {
@@ -133,6 +154,7 @@ class Vali<T = any /* { [propName: string]: any } */> extends PureComponent<IPro
 				},
 			})
 		})
+		return result
 	}
 
 	// 重置校验结果
@@ -185,5 +207,5 @@ class Vali<T = any /* { [propName: string]: any } */> extends PureComponent<IPro
 	}
 }
 
-export default Vali
-export { valiContext }
+export default CheckForm
+export { checkContext }

@@ -1,5 +1,5 @@
 import React, { Fragment, PureComponent } from 'react'
-import { IItem, IValiForm, valiContext } from './Vali'
+import { IItem, IValiForm, valiContext } from './index'
 
 interface IProps {
 	children: (prop: {

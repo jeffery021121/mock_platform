@@ -1,7 +1,8 @@
-import { Application } from 'egg';
+import { Application } from 'egg'
 
 export default (app: Application) => {
-  const { controller, router } = app;
-
-  router.get('/', controller.home.index);
-};
+	const { controller, router } = app
+  // const routewarp = 
+	router.get('/needgzip', app.middleware.routewarp, controller.home.index)
+	router.get('/', controller.home.index)
+}

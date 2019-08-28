@@ -1,10 +1,11 @@
 import { FormItemProps } from 'antd/lib/form/FormItem'
 import React, { Fragment, PureComponent } from 'react'
-import { checkContext, IItem, IValiForm } from './CheckForm'
+import { checkContext, IItem, IValiForm } from './index'
 
 interface IProps extends FormItemProps {
 	children: (prop: {
-		listen: (cb?: (...props: any[]) => void) => (...props: any[]) => Promise<void>
+		// ((...props: any[]) => void) | undefined) => (...props: any[]) => Promise<void>
+		listen: (cb?: ((status: boolean) => (...props: any[]) => void) | undefined) => (...props: any[]) => Promise<void>
 		help?: string
 		validateStatus?: '' | 'success' | 'warning' | 'error' | 'validating' | undefined
 	}) => JSX.Element
@@ -12,6 +13,8 @@ interface IProps extends FormItemProps {
 	source?: { [propName: string]: any }
 	sourceName?: string
 	needFormItem?: boolean
+	message?: string
+	needHelp?: boolean
 	defaultValue?: any // 默认值，和sourceName配合使用
 }
 // interface IProps extends FormItemProps{
@@ -37,7 +40,14 @@ class Check extends PureComponent<IProps> {
 		this.registProp()
 	}
 	public render() {
-		const { source, sourceName, needFormItem = true, ...props } = this.props
+		const {
+			source,
+			sourceName,
+			needFormItem = true,
+			needHelp = true,
+			message = '',
+			...props
+		} = this.props
 		return (
 			<checkContext.Consumer>
 				{({ setStateObj, getState, verify, deleteProp, FormItem }) => {
@@ -56,7 +66,11 @@ class Check extends PureComponent<IProps> {
 
 					if (needFormItem) {
 						return (
-							<FormItem help={status.help} validateStatus={status.validateStatus} {...props}>
+							<FormItem
+								help={(status.help && message) || status.help}
+								validateStatus={status.validateStatus}
+								{...props}
+							>
 								{this.props.children({
 									listen: this.listen(setStateObj, verify),
 								})}
@@ -67,7 +81,7 @@ class Check extends PureComponent<IProps> {
 						<Fragment>
 							{this.props.children({
 								listen: this.listen(setStateObj, verify),
-								help: status.help,
+								help: (status.help && message) || status.help,
 								validateStatus: status.validateStatus,
 							})}
 						</Fragment>
@@ -103,8 +117,9 @@ class Check extends PureComponent<IProps> {
 		}
 	}
 
+	// listen支持实时将验证结果返回
 	private listen = (setStateObj: IValiForm['setStateObj'], verify: IValiForm['verify']) => (
-		cb?: (...props: Array<any>) => void,
+		cb?: (status:boolean)=>(...props: Array<any>) => void,
 	) => async (...props: Array<any>) => {
 		const { source, sourceName, rules } = this.props
 
@@ -125,10 +140,13 @@ class Check extends PureComponent<IProps> {
 
 		setStateObj('value')(asyncSource)
 
-		if (cb) await cb(...props)
-
+		
 		const { propName } = this.state
-		if (rules) verify(asyncSource)(propName)
+		let status = false
+		if (rules) {
+			 status = verify(asyncSource)(propName)
+		}
+		if (cb) await cb(status)(...props)
 	}
 }
 

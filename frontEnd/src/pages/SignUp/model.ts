@@ -1,5 +1,6 @@
+import { sendEmail } from '@/services/signUp'
 import { stateFactory } from '@/utils/publicFunc'
-import produce from 'immer'
+// import produce from 'immer'
 
 interface INode {
 	children?: INode[]
@@ -25,6 +26,9 @@ interface IactionType {
 	'signUp/updateState': {
 		asdf: number
 	}
+	'signUp/sendEmail': {
+		eMail: string
+	}
 }
 
 const signUp: IModel<IsignUpState> = {
@@ -41,6 +45,12 @@ const signUp: IModel<IsignUpState> = {
 				payload: { id: 'id', name: 'string' },
 			})
 			console.log(action.payload.name)
+		},
+		// 正式开始
+		*sendEmail(action, { select, put }) {
+			if (action.type !== 'signUp/sendEmail') return // 如果不写action类型，这里会是联合类型，得加一层判断
+			const result = yield sendEmail(action.payload)
+			console.log('saga中获取到的返回值',result)
 		},
 	},
 

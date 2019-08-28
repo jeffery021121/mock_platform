@@ -101,6 +101,7 @@
 		"@babel/runtime": "^7.2.0",
 		"antd": "^3.12.3",
 		"async-validator": "^1.11.0",
+		"axios": "^0.19.0",
 		"dva": "^2.4.1",
 		"dva-immer": "^0.2.4",
 		"dva-loading": "^2.0.6",

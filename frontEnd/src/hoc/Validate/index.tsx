@@ -1,12 +1,10 @@
-import { Form } from 'antd' //  彻底和antd聚合，非聚合版本在Validate中，这个要提取成三方库，使用antd的import方法即可
-import { FormProps } from 'antd/lib/form/Form'
+// import { Form } from 'antd' //  和antd聚合的感觉应该是不对的，应该彻底剥离
 
 // @ts-ignore
 import schema from 'async-validator'
 import produce from 'immer'
 import React, { PureComponent } from 'react'
-
-const FormItem = Form.Item
+import Check from './Check'
 
 export interface IValiForm {
 	setStateObj: (
@@ -15,7 +13,6 @@ export interface IValiForm {
 	getState: (propName: string) => IItem | {}
 	verify: ( asyncSource?: { [propName: string]: any })=>(propName: string) => void
 	deleteProp: (propName: string) => void
-	FormItem: typeof FormItem
 }
 
 export interface IItem {
@@ -32,22 +29,20 @@ const prop: IValiForm = {
 	getState: (propName) => ({}),
 	verify: ()=>(propName) => {},
 	deleteProp: (propName) => {},
-	FormItem,
 }
 
-const checkContext = React.createContext(prop)
+const valiContext = React.createContext(prop)
 
 type getStates<T> = () => T
 
-export interface IcheckFormRenderProps<T = any> {
+export interface IvaliRenderProps<T = any> {
 	checkStatus: () => Promise<boolean>
 	getStates: getStates<T>
 	reset: () => void
 }
 
-interface IProps<T> extends FormProps {
-	children: (prop: IcheckFormRenderProps<T>) => JSX.Element
-	needForm?: boolean
+interface IProps<T> {
+	children: (prop: IvaliRenderProps<T>) => JSX.Element
 }
 
 const initState: { formData: { [propName: string]: IItem } } = {
@@ -63,36 +58,26 @@ const initState: { formData: { [propName: string]: IItem } } = {
 	},
 }
 
-class CheckForm<T = any /* { [propName: string]: any } */> extends PureComponent<IProps<T>> {
+class Vali<T = any /* { [propName: string]: any } */> extends PureComponent<IProps<T>> {
+	public static Item = Check
 	public state = initState
 	public render() {
-		const { needForm = true, children, ...props } = this.props
+		const { children, ...props } = this.props
 		return (
-			<checkContext.Provider
+			<valiContext.Provider
 				value={{
 					setStateObj: this.setStateObj,
 					getState: this.getState,
 					verify: this.verify,
 					deleteProp: this.deleteProp,
-					FormItem,
 				}}
 			>
-				{needForm ? (
-					<Form {...props}>
-						{children({
-							checkStatus: this.checkStatus,
-							getStates: this.getStates,
-							reset: this.resetAll,
-						})}
-					</Form>
-				) : (
-					children({
-						checkStatus: this.checkStatus,
-						getStates: this.getStates,
-						reset: this.resetAll,
-					})
-				)}
-			</checkContext.Provider>
+				{children({
+					checkStatus: this.checkStatus,
+					getStates: this.getStates,
+					reset: this.resetAll,
+				})}
+			</valiContext.Provider>
 		)
 	}
 
@@ -200,5 +185,5 @@ class CheckForm<T = any /* { [propName: string]: any } */> extends PureComponent
 	}
 }
 
-export default CheckForm
-export { checkContext }
+export default Vali
+export { valiContext }
